@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,200 +6,507 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Smart PDF TFN Replacer</title>
 <style>
-:root{--bg:#0b1020;--panel:#121a2e;--panel2:#18233b;--text:#edf3ff;--muted:#a7b4ce;--line:#2b3957;--accent:#78a6ff;--accent2:#a78bfa;--ok:#52d6a1;--warn:#ffd166;--bad:#ff7b8b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(1000px 600px at 10% -10%,#1e3159 0%,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-.wrap{max-width:980px;margin:0 auto;padding:32px 18px 60px}.hero{margin-bottom:24px}.eyebrow{color:#9bbcff;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:800}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:10px 0}.hero p{color:var(--muted);max-width:720px;margin:0}.panel{background:linear-gradient(160deg,rgba(24,35,59,.97),rgba(16,24,42,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 50px #0003;margin-top:16px}.panel h2{font-size:18px;margin:0 0 14px}.drop{display:block;border:1.5px dashed #52658a;border-radius:15px;padding:28px 18px;text-align:center;background:#0d1528;cursor:pointer;transition:.2s}.drop:hover,.drop.drag{border-color:var(--accent);background:#111f3d}.drop strong{display:block;font-size:17px}.drop small{display:block;color:var(--muted);margin-top:6px}.drop input{display:none}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}.field input,.field textarea{width:100%;background:#0b1325;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font:inherit;outline:none}.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #78a6ff22}.hint{color:var(--muted);font-size:12px;margin-top:6px}.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}.checks label{display:flex;align-items:center;gap:8px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border:0;border-radius:11px;padding:12px 17px;font:700 14px system-ui;cursor:pointer}.primary{background:linear-gradient(100deg,var(--accent),var(--accent2));color:#081022}.secondary{background:#202e49;color:var(--text);border:1px solid #3a4b6e}.btn:disabled{opacity:.45;cursor:not-allowed}.status{margin-top:16px;padding:12px 14px;border-radius:11px;background:#0b1325;border:1px solid var(--line);color:var(--muted);white-space:pre-wrap}.status.ok{color:var(--ok);border-color:#28634f}.status.warn{color:var(--warn);border-color:#6a5727}.status.bad{color:var(--bad);border-color:#693543}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.stat{border:1px solid var(--line);border-radius:12px;padding:13px;background:#0d1528}.stat strong{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}.report{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}.report th,.report td{text-align:left;border-bottom:1px solid var(--line);padding:9px 6px;overflow-wrap:anywhere}.report th{color:var(--muted)}.note{color:var(--muted);font-size:12px}.footer{color:#7888a6;font-size:12px;text-align:center;margin-top:25px}.hidden{display:none!important}
-@media(max-width:650px){.wrap{padding:22px 12px 40px}.panel{padding:16px}.fields{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.actions .btn{width:100%}}
+:root{--bg:#0b1020;--panel:#121a2e;--text:#edf3ff;--muted:#a7b4ce;--line:#2b3957;--accent:#78a6ff;--accent2:#a78bfa;--ok:#52d6a1;--warn:#ffd166;--bad:#ff7b8b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1000px 600px at 10% -10%,#1e3159 0%,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,Arial,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:32px 18px 60px}
+.hero{margin-bottom:24px}
+.eyebrow{color:#9bbcff;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:800}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:10px 0}
+.hero p,.hint,.note{color:var(--muted)}
+.panel{background:linear-gradient(160deg,#18233bf7,#10182afe);border:1px solid var(--line);border-radius:20px;padding:22px;margin-top:16px;box-shadow:0 18px 50px #0003}
+.panel h2{font-size:18px;margin:0 0 14px}
+.drop{display:block;border:1.5px dashed #52658a;border-radius:15px;padding:28px 18px;text-align:center;background:#0d1528;cursor:pointer}
+.drop:hover,.drop.drag{border-color:var(--accent);background:#111f3d}
+.drop strong,.drop small{display:block}
+.drop small{color:var(--muted);margin-top:6px}
+.drop input{display:none}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}
+.field input{width:100%;background:#0b1325;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit}
+.hint{font-size:12px;margin-top:6px}
+.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}
+.checks label{display:flex;align-items:center;gap:8px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{border:0;border-radius:11px;padding:12px 17px;font:700 14px system-ui;cursor:pointer}
+.primary{background:linear-gradient(100deg,var(--accent),var(--accent2));color:#081022}
+.secondary{background:#202e49;color:var(--text);border:1px solid #3a4b6e}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.status{margin-top:16px;padding:12px 14px;border-radius:11px;background:#0b1325;border:1px solid var(--line);color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.status.ok{color:var(--ok);border-color:#28634f}
+.status.warn{color:var(--warn);border-color:#6a5727}
+.status.bad{color:var(--bad);border-color:#693543}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:13px;background:#0d1528}
+.stat strong{display:block;font-size:25px}
+.stat span{font-size:12px;color:var(--muted)}
+.report{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.report th,.report td{text-align:left;border-bottom:1px solid var(--line);padding:9px 6px;overflow-wrap:anywhere}
+.report th{color:var(--muted)}
+.note{font-size:12px}
+.footer{color:#7888a6;font-size:12px;text-align:center;margin-top:25px}
+.hidden{display:none!important}
+@media(max-width:650px){.wrap{padding:22px 12px 40px}.panel{padding:16px}.fields,.stats{grid-template-columns:1fr}.actions .btn{width:100%}}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <header class="hero">
-    <div class="eyebrow">Browser-based PDF utility</div>
-    <h1>Smart PDF TFN Replacer</h1>
-    <p>Find common text variations of an old phone number and replace them with your new number. Your PDF stays in this browser tab; it is not sent to a server.</p>
-  </header>
+<header class="hero">
+<div class="eyebrow">Browser-based PDF utility</div>
+<h1>Smart PDF TFN Replacer</h1>
+<p>Upload a selectable-text PDF, identify an old phone number, and download an edited copy. Processing happens in your browser.</p>
+</header>
 
-  <section class="panel">
-    <h2>1. Choose your PDF</h2>
-    <label class="drop" id="dropZone">
-      <input id="pdfFile" type="file" accept="application/pdf,.pdf">
-      <strong>Drop a PDF here or click to browse</strong>
-      <small id="fileLabel">Selectable-text PDFs only · Max recommended size: 25 MB</small>
-    </label>
+<section class="panel">
+<h2>1. Choose your PDF</h2>
+<label class="drop" id="dropZone">
+<input id="pdfFile" type="file" accept="application/pdf,.pdf">
+<strong>Drop a PDF here or click to browse</strong>
+<small id="fileLabel">Selectable-text PDFs · Max recommended size: 25 MB</small>
+</label>
 
-    <div class="fields">
-      <div class="field">
-        <label for="oldNumber">Old TFN / phone number</label>
-        <input id="oldNumber" type="text" placeholder="+1-800-123-4567" autocomplete="off">
-        <div class="hint">Enter the number in its clearest form. Common punctuation and spacing variations are detected.</div>
-      </div>
-      <div class="field">
-        <label for="newNumber">New TFN / phone number</label>
-        <input id="newNumber" type="text" placeholder="+1-888-792-3460" autocomplete="off">
-        <div class="hint">This exact number is inserted at detected matches.</div>
-      </div>
-    </div>
+<div class="fields">
+<div class="field">
+<label for="oldNumber">Old TFN / phone number</label>
+<input id="oldNumber" type="text" placeholder="+1-800-123-4567" autocomplete="off">
+<div class="hint">Enter the old number in its clearest form.</div>
+</div>
+<div class="field">
+<label for="newNumber">Replacement TFN</label>
+<input id="newNumber" type="text" value="+1-888-792-3460" readonly>
+<div class="hint">The new TFN is fixed to the number you requested.</div>
+</div>
+</div>
 
-    <div class="checks">
-      <label><input type="checkbox" id="matchNoCountry" checked> Also match without leading country code (when unambiguous)</label>
-      <label><input type="checkbox" id="dryRun"> Scan only — don't create a PDF yet</label>
-    </div>
+<div class="checks">
+<label><input type="checkbox" id="matchNoCountry" checked> Also match without leading country code</label>
+<label><input type="checkbox" id="dryRun"> Scan only — don't download a PDF</label>
+</div>
 
-    <div class="actions">
-      <button class="btn primary" id="runBtn">Scan and replace</button>
-      <button class="btn secondary" id="resetBtn" type="button">Reset</button>
-    </div>
-    <div class="status" id="status" role="status" aria-live="polite">Ready. Select a PDF and enter both numbers.</div>
-    <div class="stats hidden" id="stats">
-      <div class="stat"><strong id="foundCount">0</strong><span>Detected matches</span></div>
-      <div class="stat"><strong id="pageCount">0</strong><span>Pages scanned</span></div>
-      <div class="stat"><strong id="changedCount">0</strong><span>Text items changed</span></div>
-    </div>
-    <div id="reportWrap" class="hidden">
-      <h2 style="margin-top:22px">Scan report</h2>
-      <p class="note">The preview shows extracted text around matches. PDF.js text extraction does not always mirror visual reading order or encoding.</p>
-      <table class="report"><thead><tr><th>Page</th><th>Extracted text match</th><th>Result</th></tr></thead><tbody id="reportBody"></tbody></table>
-    </div>
-  </section>
+<div class="actions">
+<button class="btn primary" id="runBtn">Scan and replace</button>
+<button class="btn secondary" id="resetBtn" type="button">Reset</button>
+</div>
 
-  <section class="panel">
-    <h2>Important limitations</h2>
-    <ul class="note">
-      <li>This browser-only version uses PDF.js to find text and pdf-lib to edit PDF text content streams. PDF text replacement is not the same as editing a Word document.</li>
-      <li>Only matches that can be safely located in the PDF content stream are replaced. If a number is split across multiple text fragments, encoded with a custom font, or drawn as vector outlines, it may not be changed.</li>
-      <li>Font widths, spacing, ligatures, or line wrapping can change. Always open and verify the output PDF before publishing it.</li>
-      <li>Scanned/image-only numbers are not processed. Page images are not OCR'd or edited.</li>
-      <li>For reliability, use a backup and compare the output against the original. If the scan finds matches but the replacement cannot be safely applied, the tool reports that rather than claiming success.</li>
-    </ul>
-  </section>
-  <div class="footer">Smart PDF TFN Replacer · Files are processed locally in your browser.</div>
+<div class="status" id="status" role="status" aria-live="polite">Ready. Select a PDF and enter the old number.</div>
+
+<div class="stats hidden" id="stats">
+<div class="stat"><strong id="foundCount">0</strong><span>Detected matches</span></div>
+<div class="stat"><strong id="pageCount">0</strong><span>Pages scanned</span></div>
+<div class="stat"><strong id="changedCount">0</strong><span>Text items edited</span></div>
+</div>
+
+<div id="reportWrap" class="hidden">
+<h2 style="margin-top:22px">Scan report</h2>
+<p class="note">Check the output PDF carefully. Text extraction can differ from the page's visual layout.</p>
+<table class="report">
+<thead><tr><th>Page</th><th>Original text item</th><th>Action</th></tr></thead>
+<tbody id="reportBody"></tbody>
+</table>
+</div>
+</section>
+
+<section class="panel">
+<h2>Important limitations</h2>
+<ul class="note">
+<li>This tool works on selectable text, not scanned/image-only numbers.</li>
+<li>Text is covered with a white rectangle and redrawn. This is not secure redaction and may not preserve the original font, colour, spacing, or background.</li>
+<li>It handles matching numbers inside individual PDF text items. A number split across several items may be missed.</li>
+<li>In each individual text item, the first match is replaced and subsequent matches are deleted. This is not necessarily the same as the first TFN in an entire paragraph.</li>
+<li>Keep your original PDF as a backup and inspect the downloaded file before using it.</li>
+</ul>
+</section>
+<div class="footer">Smart PDF TFN Replacer · Local browser processing</div>
 </main>
 
-<!-- Libraries are loaded from public CDNs. Internet access is required to load them. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script>
 (() => {
-  const $ = id => document.getElementById(id);
-  const fileInput = $('pdfFile'), dropZone = $('dropZone'), status = $('status');
-  let selectedFile = null;
-  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+'use strict';
 
-  function setStatus(msg, kind='') { status.className = 'status' + (kind ? ' ' + kind : ''); status.textContent = msg; }
-  function normalizeDigits(s) { return (s || '').replace(/\D/g, ''); }
-  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function prettyName(file) { $('fileLabel').textContent = file ? `${file.name} · ${(file.size/1024/1024).toFixed(2)} MB` : 'Selectable-text PDFs only · Max recommended size: 25 MB'; }
-  function setFile(file) {
-    if (!file) return;
-    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) { setStatus('Please choose a PDF file.', 'bad'); return; }
-    selectedFile = file; prettyName(file); setStatus(`Selected: ${file.name}`);
-    $('stats').classList.add('hidden'); $('reportWrap').classList.add('hidden');
-  }
-  fileInput.addEventListener('change', e => setFile(e.target.files[0]));
-  ['dragenter','dragover'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.remove('drag'); }));
-  dropZone.addEventListener('drop', e => setFile(e.dataTransfer.files[0]));
+const $ = id => document.getElementById(id);
+const fileInput = $('pdfFile');
+const dropZone = $('dropZone');
+const status = $('status');
+const NEW_TFN = '+1-888-792-3460';
+let selectedFile = null;
 
-  function buildVariants(oldRaw, matchNoCountry) {
-    const digits = normalizeDigits(oldRaw);
-    if (digits.length < 7 || digits.length > 15) throw new Error('Enter a valid old phone number with 7–15 digits.');
-    const variants = new Set([digits]);
-    // For +1 / 1-prefixed NANP numbers, optionally allow the 10-digit local form.
-    if (matchNoCountry && digits.length === 11 && digits.startsWith('1')) variants.add(digits.slice(1));
-    // Use digit-run matching while tolerating separators and common HTML entity text.
-    // This is for discovery, not a guarantee that all encoded forms are editable.
-    return [...variants].sort((a,b)=>b.length-a.length);
+$('newNumber').value = NEW_TFN;
+
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+function setStatus(message, kind='') {
+  status.className = 'status' + (kind ? ' ' + kind : '');
+  status.textContent = message;
+}
+
+function digitsOnly(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function prettyName(file) {
+  $('fileLabel').textContent = file
+    ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB`
+    : 'Selectable-text PDFs · Max recommended size: 25 MB';
+}
+
+function setFile(file) {
+  if (!file) return;
+
+  if (file.type !== 'application/pdf' &&
+      !file.name.toLowerCase().endsWith('.pdf')) {
+    setStatus('Please choose a PDF file.', 'bad');
+    return;
   }
-  function makeDigitPattern(digits) {
-    const sep = String.raw`(?:[\s\u00a0\u2007\u202f().\[\]{}*\\/_\-–—.:;]|&#(?:x0*20|0*32);?|&nbsp;|&period;|&ast;)*`;
-    return digits.split('').map(ch => ch).join(sep);
+
+  selectedFile = file;
+  prettyName(file);
+  setStatus(`Selected: ${file.name}`);
+  $('stats').classList.add('hidden');
+  $('reportWrap').classList.add('hidden');
+}
+
+fileInput.addEventListener('change', e => setFile(e.target.files[0]));
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, event => {
+    event.preventDefault();
+    dropZone.classList.add('drag');
+  });
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, event => {
+    event.preventDefault();
+    dropZone.classList.remove('drag');
+  });
+});
+
+dropZone.addEventListener('drop', event => {
+  setFile(event.dataTransfer.files[0]);
+});
+
+function buildVariants(oldRaw, matchNoCountry) {
+  const digits = digitsOnly(oldRaw);
+
+  if (digits.length < 7 || digits.length > 15) {
+    throw new Error('Enter a valid old phone number with 7–15 digits.');
   }
-  function findMatches(text, variants) {
-    const out = [];
-    for (const digits of variants) {
-      const re = new RegExp(`(?<!\\d)${makeDigitPattern(digits)}(?!\\d)`, 'g');
-      let m;
-      while ((m = re.exec(text)) !== null) out.push({index:m.index, length:m[0].length, matched:m[0], digits});
-    }
-    out.sort((a,b)=>a.index-b.index || b.length-a.length);
-    const filtered = [];
-    let end = -1;
-    for (const m of out) {
-      if (m.index >= end) { filtered.push(m); end = m.index + m.length; }
-    }
-    return filtered;
+
+  const variants = new Set([digits]);
+
+  if (matchNoCountry && digits.length === 11 && digits.startsWith('1')) {
+    variants.add(digits.slice(1));
   }
-  async function scanPdf(bytes, variants) {
-    if (!window.pdfjsLib) throw new Error('PDF.js did not load. Refresh the page and check your internet connection.');
-    const doc = await pdfjsLib.getDocument({data: bytes.slice()}).promise;
-    const matches = []; let pages = 0;
-    for (let p=1; p<=doc.numPages; p++) {
-      const page = await doc.getPage(p);
-      const content = await page.getTextContent();
-      const text = content.items.map(i => i.str || '').join(' ');
-      const found = findMatches(text, variants);
-      found.forEach(m => matches.push({page:p, ...m, context:text.slice(Math.max(0,m.index-42), Math.min(text.length,m.index+m.length+42))}));
-      pages++;
-    }
-    return {doc, matches, pages};
-  }
-  function showReport(matches) {
-    const body = $('reportBody'); body.replaceChildren();
-    if (!matches.length) {
-      const tr=document.createElement('tr'), td=document.createElement('td');
-      td.colSpan=3; td.textContent='No matching number found in extracted selectable text.'; tr.appendChild(td); body.appendChild(tr);
-    } else {
-      matches.slice(0,250).forEach(m => {
-        const tr=document.createElement('tr');
-        [m.page, m.context, 'Detected — verify replacement'].forEach((v,i)=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});
-        body.appendChild(tr);
+
+  return [...variants].sort((a, b) => b.length - a.length);
+}
+
+function makeDigitPattern(digits) {
+  const separator =
+    String.raw`(?:[\s\u00a0\u2007\u202f().\[\]{}*\\/_\-–—.:;]|&#(?:x0*20|0*32);?|&nbsp;|&period;|&ast;)*`;
+
+  return digits.split('').join(separator);
+}
+
+function findMatches(text, variants) {
+  const matches = [];
+
+  for (const digits of variants) {
+    const pattern = new RegExp(
+      `(?<!\\d)${makeDigitPattern(digits)}(?!\\d)`,
+      'g'
+    );
+
+    let match;
+
+    while ((match = pattern.exec(text)) !== null) {
+      matches.push({
+        index: match.index,
+        length: match[0].length,
+        matched: match[0],
+        digits
       });
-      if(matches.length>250){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent=`Showing first 250 of ${matches.length} matches.`;tr.appendChild(td);body.appendChild(tr);}
+
+      if (match[0].length === 0) pattern.lastIndex++;
     }
-    $('reportWrap').classList.remove('hidden');
   }
 
-  $('runBtn').addEventListener('click', async () => {
-    try {
-      if (!selectedFile) throw new Error('Choose a PDF first.');
-      const oldRaw = $('oldNumber').value.trim(), newRaw = $('newNumber').value.trim();
-      if (!oldRaw || !newRaw) throw new Error('Enter both the old TFN and the new TFN.');
-      const oldDigits=normalizeDigits(oldRaw), newDigits=normalizeDigits(newRaw);
-      if (newDigits.length < 7 || newDigits.length > 15) throw new Error('The new TFN must contain 7–15 digits.');
-      if (oldDigits === newDigits) throw new Error('The old and new numbers contain the same digits.');
-      if (!window.PDFLib) throw new Error('pdf-lib did not load. Refresh the page and check your internet connection.');
-      $('runBtn').disabled=true; $('stats').classList.add('hidden'); $('reportWrap').classList.add('hidden');
-      setStatus('Reading PDF and scanning selectable text…');
-      const bytes = new Uint8Array(await selectedFile.arrayBuffer());
-      const variants=buildVariants(oldRaw,$('matchNoCountry').checked);
-      const scan=await scanPdf(bytes,variants);
-      $('foundCount').textContent=scan.matches.length;
-      $('pageCount').textContent=scan.pages;
-      $('changedCount').textContent='0';
-      $('stats').classList.remove('hidden'); showReport(scan.matches);
-      if (!scan.matches.length) { setStatus('Scan complete: no matching old TFN was found in selectable text. No PDF was created.', 'warn'); return; }
-      if ($('dryRun').checked) { setStatus(`Scan only complete. Found ${scan.matches.length} candidate match(es) across ${scan.pages} page(s). No PDF was changed.`, 'ok'); return; }
+  matches.sort((a, b) => a.index - b.index || b.length - a.length);
 
-      // Safe by default: pdf-lib does not provide a high-level API to replace arbitrary
-      // existing text while preserving its original font/layout. Do not create a fake
-      // "edited" file based only on extracted text matches.
+  const filtered = [];
+  let end = -1;
+
+  for (const match of matches) {
+    if (match.index >= end) {
+      filtered.push(match);
+      end = match.index + match.length;
+    }
+  }
+
+  return filtered;
+}
+
+function makeEditedText(original, matches) {
+  let output = '';
+  let cursor = 0;
+
+  matches.forEach((match, index) => {
+    output += original.slice(cursor, match.index);
+
+    if (index === 0) {
+      output += NEW_TFN;
+    }
+
+    cursor = match.index + match.length;
+  });
+
+  output += original.slice(cursor);
+
+  return {
+    text: output,
+    replacements: matches.length ? 1 : 0,
+    deletions: Math.max(0, matches.length - 1)
+  };
+}
+
+async function scanPdf(bytes, variants) {
+  if (!window.pdfjsLib) {
+    throw new Error('PDF.js did not load. Refresh and check your internet connection.');
+  }
+
+  const task = pdfjsLib.getDocument({ data: bytes.slice() });
+  const doc = await task.promise;
+  const pages = [];
+
+  for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
+    const page = await doc.getPage(pageNumber);
+    const content = await page.getTextContent();
+
+    pages.push({
+      pageNumber,
+      items: content.items.map(item => ({
+        str: item.str || '',
+        width: item.width || 0,
+        height: item.height || 0,
+        transform: item.transform || null,
+        fontName: item.fontName || '',
+        hasEOL: !!item.hasEOL
+      }))
+    });
+  }
+
+  return { doc, pages };
+}
+
+function showReport(rows) {
+  const body = $('reportBody');
+  body.replaceChildren();
+
+  if (!rows.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 3;
+    td.textContent = 'No matching TFNs found in individual selectable text items.';
+    tr.appendChild(td);
+    body.appendChild(tr);
+  } else {
+    rows.slice(0, 250).forEach(row => {
+      const tr = document.createElement('tr');
+
+      [row.page, row.original, row.action].forEach(value => {
+        const td = document.createElement('td');
+        td.textContent = String(value);
+        tr.appendChild(td);
+      });
+
+      body.appendChild(tr);
+    });
+
+    if (rows.length > 250) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 3;
+      td.textContent = `Showing first 250 of ${rows.length} edited text items.`;
+      tr.appendChild(td);
+      body.appendChild(tr);
+    }
+  }
+
+  $('reportWrap').classList.remove('hidden');
+}
+
+function getFontSize(transform) {
+  return Math.max(5, Math.hypot(transform[0], transform[1]) || 10);
+}
+
+$('runBtn').addEventListener('click', async () => {
+  try {
+    if (!selectedFile) throw new Error('Choose a PDF first.');
+
+    const oldRaw = $('oldNumber').value.trim();
+    if (!oldRaw) throw new Error('Enter the old TFN.');
+
+    if (!window.PDFLib) {
+      throw new Error('pdf-lib did not load. Refresh and check your internet connection.');
+    }
+
+    const variants = buildVariants(oldRaw, $('matchNoCountry').checked);
+    const bytes = new Uint8Array(await selectedFile.arrayBuffer());
+
+    $('runBtn').disabled = true;
+    $('stats').classList.add('hidden');
+    $('reportWrap').classList.add('hidden');
+    setStatus('Loading and scanning PDF text…');
+
+    const scan = await scanPdf(bytes, variants);
+    const rows = [];
+    let totalMatches = 0;
+    let totalReplacements = 0;
+    let totalDeletions = 0;
+    let changedItems = 0;
+
+    for (const page of scan.pages) {
+      for (const item of page.items) {
+        if (!item.str || !item.transform) continue;
+
+        const matches = findMatches(item.str, variants);
+        if (!matches.length) continue;
+
+        const edited = makeEditedText(item.str, matches);
+
+        totalMatches += matches.length;
+        totalReplacements += edited.replacements;
+        totalDeletions += edited.deletions;
+
+        rows.push({
+          page: page.pageNumber,
+          original: item.str,
+          action: `Replace first; delete ${edited.deletions} additional match(es)`
+        });
+
+        item.editedText = edited.text;
+        item.matchCount = matches.length;
+        changedItems++;
+      }
+    }
+
+    $('foundCount').textContent = totalMatches;
+    $('pageCount').textContent = scan.pages.length;
+    $('changedCount').textContent = changedItems;
+    $('stats').classList.remove('hidden');
+    showReport(rows);
+
+    if (!changedItems) {
       setStatus(
-        `Found ${scan.matches.length} candidate match(es) across ${scan.pages} page(s), but automatic replacement was not applied.\n\n`+
-        `Reason: PDF.js can extract the visible text, but reliably changing existing PDF text in-place requires mapping each text fragment to its font encoding and drawing coordinates. A blind stream replacement can corrupt the PDF or alter unrelated content.\n\n`+
-        `This version deliberately stops rather than give you a file that appears successful but still contains old numbers. The scan report is ready above. For dependable editing, use a server/desktop PDF text-editing engine or a tailored parser for your PDF sample.`,
+        'No matches were found inside individual selectable text items. ' +
+        'The number may be split across multiple items or the PDF may use custom encoding. ' +
+        'No PDF was created.',
         'warn'
       );
-    } catch (e) {
-      setStatus(e && e.message ? e.message : String(e), 'bad');
-    } finally { $('runBtn').disabled=false; }
-  });
-  $('resetBtn').addEventListener('click', () => {
-    selectedFile=null; fileInput.value=''; $('oldNumber').value=''; $('newNumber').value='';
-    $('matchNoCountry').checked=true; $('dryRun').checked=false; prettyName(null);
-    $('stats').classList.add('hidden'); $('reportWrap').classList.add('hidden');
-    setStatus('Ready. Select a PDF and enter both numbers.');
-  });
+      return;
+    }
+
+    if ($('dryRun').checked) {
+      setStatus(
+        `Scan only complete. Found ${totalMatches} match(es) in ${changedItems} text item(s). ` +
+        `Planned: ${totalReplacements} replacement(s), ${totalDeletions} deletion(s). No PDF downloaded.`,
+        'ok'
+      );
+      return;
+    }
+
+    setStatus('Preparing edited PDF…');
+
+    const outputPdf = await PDFLib.PDFDocument.load(bytes);
+    const standardFont = await outputPdf.embedFont(PDFLib.StandardFonts.Helvetica);
+    const outputPages = outputPdf.getPages();
+
+    for (const pageInfo of scan.pages) {
+      const targetPage = outputPages[pageInfo.pageNumber - 1];
+
+      for (const item of pageInfo.items) {
+        if (typeof item.editedText !== 'string' || !item.transform) continue;
+
+        const transform = item.transform;
+        const x = transform[4];
+        const y = transform[5];
+        const fontSize = getFontSize(transform);
+
+        const originalWidth = Math.max(
+          item.width || 0,
+          standardFont.widthOfTextAtSize(item.str, fontSize)
+        );
+
+        const rectHeight = Math.max(item.height || 0, fontSize * 1.25);
+        const rectY = y - fontSize * 0.3;
+
+        targetPage.drawRectangle({
+          x: x - 1,
+          y: rectY,
+          width: Math.max(1, originalWidth + 3),
+          height: rectHeight,
+          color: PDFLib.rgb(1, 1, 1),
+          borderWidth: 0
+        });
+
+        if (item.editedText.length) {
+          targetPage.drawText(item.editedText, {
+            x,
+            y,
+            size: fontSize,
+            font: standardFont,
+            color: PDFLib.rgb(0, 0, 0),
+            maxWidth: Math.max(
+              originalWidth + 3,
+              standardFont.widthOfTextAtSize(item.editedText, fontSize)
+            )
+          });
+        }
+      }
+    }
+
+    const outputBytes = await outputPdf.save();
+    const blob = new Blob([outputBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = selectedFile.name.replace(/\.pdf$/i, '') + '-updated.pdf';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+
+    setStatus(
+      `PDF download started. Planned changes: ${totalReplacements} replacement(s) and ` +
+      `${totalDeletions} additional match(es) deleted. Open the output PDF and verify each page.`,
+      'ok'
+    );
+  } catch (error) {
+    setStatus(error && error.message ? error.message : String(error), 'bad');
+  } finally {
+    $('runBtn').disabled = false;
+  }
+});
+
+$('resetBtn').addEventListener('click', () => {
+  selectedFile = null;
+  fileInput.value = '';
+  $('oldNumber').value = '';
+  $('newNumber').value = NEW_TFN;
+  $('matchNoCountry').checked = true;
+  $('dryRun').checked = false;
+  prettyName(null);
+  $('stats').classList.add('hidden');
+  $('reportWrap').classList.add('hidden');
+  setStatus('Ready. Select a PDF and enter the old number.');
+});
 })();
 </script>
 </body>
