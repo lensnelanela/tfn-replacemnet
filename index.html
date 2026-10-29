@@ -1,205 +1,964 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Smart PDF TFN Replacer</title>
-<style>
-:root{--bg:#0b1020;--panel:#121a2e;--panel2:#18233b;--text:#edf3ff;--muted:#a7b4ce;--line:#2b3957;--accent:#78a6ff;--accent2:#a78bfa;--ok:#52d6a1;--warn:#ffd166;--bad:#ff7b8b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(1000px 600px at 10% -10%,#1e3159 0%,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-.wrap{max-width:980px;margin:0 auto;padding:32px 18px 60px}.hero{margin-bottom:24px}.eyebrow{color:#9bbcff;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:800}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:10px 0}.hero p{color:var(--muted);max-width:720px;margin:0}.panel{background:linear-gradient(160deg,rgba(24,35,59,.97),rgba(16,24,42,.98));border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 50px #0003;margin-top:16px}.panel h2{font-size:18px;margin:0 0 14px}.drop{display:block;border:1.5px dashed #52658a;border-radius:15px;padding:28px 18px;text-align:center;background:#0d1528;cursor:pointer;transition:.2s}.drop:hover,.drop.drag{border-color:var(--accent);background:#111f3d}.drop strong{display:block;font-size:17px}.drop small{display:block;color:var(--muted);margin-top:6px}.drop input{display:none}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}.field input,.field textarea{width:100%;background:#0b1325;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px 13px;font:inherit;outline:none}.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #78a6ff22}.hint{color:var(--muted);font-size:12px;margin-top:6px}.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;color:var(--muted);font-size:13px}.checks label{display:flex;align-items:center;gap:8px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border:0;border-radius:11px;padding:12px 17px;font:700 14px system-ui;cursor:pointer}.primary{background:linear-gradient(100deg,var(--accent),var(--accent2));color:#081022}.secondary{background:#202e49;color:var(--text);border:1px solid #3a4b6e}.btn:disabled{opacity:.45;cursor:not-allowed}.status{margin-top:16px;padding:12px 14px;border-radius:11px;background:#0b1325;border:1px solid var(--line);color:var(--muted);white-space:pre-wrap}.status.ok{color:var(--ok);border-color:#28634f}.status.warn{color:var(--warn);border-color:#6a5727}.status.bad{color:var(--bad);border-color:#693543}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.stat{border:1px solid var(--line);border-radius:12px;padding:13px;background:#0d1528}.stat strong{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}.report{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}.report th,.report td{text-align:left;border-bottom:1px solid var(--line);padding:9px 6px;overflow-wrap:anywhere}.report th{color:var(--muted)}.note{color:var(--muted);font-size:12px}.footer{color:#7888a6;font-size:12px;text-align:center;margin-top:25px}.hidden{display:none!important}
-@media(max-width:650px){.wrap{padding:22px 12px 40px}.panel{padding:16px}.fields{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.actions .btn{width:100%}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart PDF TFN Replacer</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #182235;
+      --muted: #66748a;
+      --primary: #6258e8;
+      --primary-dark: #4d43cc;
+      --border: #dce3ef;
+      --success: #147d50;
+      --danger: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, #e4e6ff 0, transparent 32%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1050px, 94%);
+      margin: 35px auto;
+    }
+
+    .hero {
+      padding: 30px;
+      border-radius: 24px;
+      color: white;
+      background: linear-gradient(130deg, #5147d8, #8274f7);
+      box-shadow: 0 18px 45px #5147d829;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(25px, 4vw, 36px);
+    }
+
+    .hero p {
+      margin: 0;
+      line-height: 1.7;
+      color: #f0efff;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #e5eaf3;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px #1a2a4410;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .subtext {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 14px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: 2px solid #6258e833;
+      border-color: var(--primary);
+    }
+
+    .dropzone {
+      border: 2px dashed #b9c0e8;
+      background: #f8f8ff;
+      padding: 25px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .dropzone strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .dropzone input {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 11px;
+      padding: 12px 17px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:hover { background: var(--primary-dark); }
+
+    .secondary {
+      background: #ecebff;
+      color: #4239b7;
+    }
+
+    .neutral {
+      background: #eef2f7;
+      color: #263349;
+    }
+
+    .success {
+      background: #e0f6eb;
+      color: #11643e;
+    }
+
+    textarea {
+      min-height: 360px;
+      resize: vertical;
+      line-height: 1.7;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .status {
+      display: none;
+      margin-top: 16px;
+      padding: 13px 15px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .status.info {
+      display: block;
+      color: #3730a3;
+      background: #eeeeff;
+    }
+
+    .status.ok {
+      display: block;
+      color: var(--success);
+      background: #e5f8ee;
+    }
+
+    .status.error {
+      display: block;
+      color: var(--danger);
+      background: #fff0ee;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .stat {
+      padding: 15px;
+      background: #f7f8fc;
+      border: 1px solid #e8ecf4;
+      border-radius: 13px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 23px;
+      margin-bottom: 5px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .notice {
+      background: #fff8e7;
+      color: #775510;
+      padding: 14px;
+      border-radius: 12px;
+      line-height: 1.6;
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 10px 0 30px;
+    }
+
+    @media (max-width: 650px) {
+      .container { margin: 16px auto; }
+      .hero, .card { padding: 19px; }
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+      button { flex: 1 1 auto; }
+    }
+  </style>
 </head>
+
 <body>
-<main class="wrap">
-  <header class="hero">
-    <div class="eyebrow">Browser-based PDF utility</div>
-    <h1>Smart PDF TFN Replacer</h1>
-    <p>Find common text variations of an old phone number and replace them with your new number. Your PDF stays in this browser tab; it is not sent to a server.</p>
-  </header>
+  <main class="container">
+    <header class="hero">
+      <h1>Smart PDF TFN Replacer</h1>
+      <p>
+        Upload a PDF, extract its text, automatically detect phone-number
+        patterns, replace them, edit the result and create a new PDF.
+      </p>
+    </header>
 
-  <section class="panel">
-    <h2>1. Choose your PDF</h2>
-    <label class="drop" id="dropZone">
-      <input id="pdfFile" type="file" accept="application/pdf,.pdf">
-      <strong>Drop a PDF here or click to browse</strong>
-      <small id="fileLabel">Selectable-text PDFs only · Max recommended size: 25 MB</small>
-    </label>
+    <section class="card">
+      <h2>1. Upload your PDF</h2>
+      <p class="subtext">
+        Select a PDF containing selectable text. The file is processed
+        in your browser.
+      </p>
 
-    <div class="fields">
-      <div class="field">
-        <label for="oldNumber">Old TFN / phone number</label>
-        <input id="oldNumber" type="text" placeholder="+1-800-123-4567" autocomplete="off">
-        <div class="hint">Enter the number in its clearest form. Common punctuation and spacing variations are detected.</div>
+      <div class="dropzone">
+        <strong>Select your PDF file</strong>
+        <span class="subtext">PDF files only</span>
+        <input id="pdfFile" type="file" accept=".pdf,application/pdf">
       </div>
-      <div class="field">
-        <label for="newNumber">New TFN / phone number</label>
-        <input id="newNumber" type="text" placeholder="+1-888-792-3460" autocomplete="off">
-        <div class="hint">This exact number is inserted at detected matches.</div>
+
+      <label for="newTFN">New TFN / phone number</label>
+      <input
+        id="newTFN"
+        type="text"
+        value="+1-888-792-3460"
+        placeholder="Enter the replacement number"
+      >
+
+      <div class="buttons">
+        <button id="analyzeBtn" class="primary">Analyze PDF</button>
+        <button id="resetBtn" class="neutral">Reset</button>
       </div>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <h2>2. Review extracted text</h2>
+      <p class="subtext">
+        Edit the text below if needed. Paragraphs are separated by blank
+        lines. The replacement tool processes each paragraph independently.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <strong id="paragraphCount">0</strong>
+          <span>Paragraphs</span>
+        </div>
+        <div class="stat">
+          <strong id="detectedCount">0</strong>
+          <span>Detected candidates</span>
+        </div>
+        <div class="stat">
+          <strong id="replacementCount">0</strong>
+          <span>Replacements made</span>
+        </div>
+      </div>
+
+      <textarea
+        id="editor"
+        placeholder="Your extracted PDF text will appear here..."
+        spellcheck="false"
+      ></textarea>
+
+      <div class="buttons">
+        <button id="replaceBtn" class="primary" disabled>
+          Detect and Replace TFNs
+        </button>
+        <button id="restoreBtn" class="neutral" disabled>
+          Restore Extracted Text
+        </button>
+        <button id="selectAllBtn" class="secondary" disabled>
+          Select All Text
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Create a new PDF</h2>
+      <p class="subtext">
+        Generate a new, text-based PDF from the editable text above.
+        Review the content before downloading.
+      </p>
+
+      <button id="downloadBtn" class="success" disabled>
+        Generate and Download PDF
+      </button>
+
+      <div class="notice">
+        <strong>Important:</strong> This creates a new PDF from extracted
+        text. It does not preserve the original PDF's exact page layout,
+        images, tables or formatting. Phone-number detection is approximate;
+        dates, reference numbers and other numeric strings may be detected.
+        Review the edited text before downloading. Scanned PDFs require OCR.
+      </div>
+    </section>
+
+    <div class="footer">
+      Smart PDF TFN Replacer · Browser-based text processing
     </div>
+  </main>
 
-    <div class="checks">
-      <label><input type="checkbox" id="matchNoCountry" checked> Also match without leading country code (when unambiguous)</label>
-      <label><input type="checkbox" id="dryRun"> Scan only — don't create a PDF yet</label>
-    </div>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-    <div class="actions">
-      <button class="btn primary" id="runBtn">Scan and replace</button>
-      <button class="btn secondary" id="resetBtn" type="button">Reset</button>
-    </div>
-    <div class="status" id="status" role="status" aria-live="polite">Ready. Select a PDF and enter both numbers.</div>
-    <div class="stats hidden" id="stats">
-      <div class="stat"><strong id="foundCount">0</strong><span>Detected matches</span></div>
-      <div class="stat"><strong id="pageCount">0</strong><span>Pages scanned</span></div>
-      <div class="stat"><strong id="changedCount">0</strong><span>Text items changed</span></div>
-    </div>
-    <div id="reportWrap" class="hidden">
-      <h2 style="margin-top:22px">Scan report</h2>
-      <p class="note">The preview shows extracted text around matches. PDF.js text extraction does not always mirror visual reading order or encoding.</p>
-      <table class="report"><thead><tr><th>Page</th><th>Extracted text match</th><th>Result</th></tr></thead><tbody id="reportBody"></tbody></table>
-    </div>
-  </section>
+    const fileInput = document.getElementById("pdfFile");
+    const newTFNInput = document.getElementById("newTFN");
+    const editor = document.getElementById("editor");
+    const statusBox = document.getElementById("status");
 
-  <section class="panel">
-    <h2>Important limitations</h2>
-    <ul class="note">
-      <li>This browser-only version uses PDF.js to find text and pdf-lib to edit PDF text content streams. PDF text replacement is not the same as editing a Word document.</li>
-      <li>Only matches that can be safely located in the PDF content stream are replaced. If a number is split across multiple text fragments, encoded with a custom font, or drawn as vector outlines, it may not be changed.</li>
-      <li>Font widths, spacing, ligatures, or line wrapping can change. Always open and verify the output PDF before publishing it.</li>
-      <li>Scanned/image-only numbers are not processed. Page images are not OCR'd or edited.</li>
-      <li>For reliability, use a backup and compare the output against the original. If the scan finds matches but the replacement cannot be safely applied, the tool reports that rather than claiming success.</li>
-    </ul>
-  </section>
-  <div class="footer">Smart PDF TFN Replacer · Files are processed locally in your browser.</div>
-</main>
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const replaceBtn = document.getElementById("replaceBtn");
+    const restoreBtn = document.getElementById("restoreBtn");
+    const selectAllBtn = document.getElementById("selectAllBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const resetBtn = document.getElementById("resetBtn");
 
-<!-- Libraries are loaded from public CDNs. Internet access is required to load them. -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-<script>
-(() => {
-  const $ = id => document.getElementById(id);
-  const fileInput = $('pdfFile'), dropZone = $('dropZone'), status = $('status');
-  let selectedFile = null;
-  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    let originalText = "";
+    let extracted = false;
+    let busy = false;
 
-  function setStatus(msg, kind='') { status.className = 'status' + (kind ? ' ' + kind : ''); status.textContent = msg; }
-  function normalizeDigits(s) { return (s || '').replace(/\D/g, ''); }
-  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function prettyName(file) { $('fileLabel').textContent = file ? `${file.name} · ${(file.size/1024/1024).toFixed(2)} MB` : 'Selectable-text PDFs only · Max recommended size: 25 MB'; }
-  function setFile(file) {
-    if (!file) return;
-    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) { setStatus('Please choose a PDF file.', 'bad'); return; }
-    selectedFile = file; prettyName(file); setStatus(`Selected: ${file.name}`);
-    $('stats').classList.add('hidden'); $('reportWrap').classList.add('hidden');
-  }
-  fileInput.addEventListener('change', e => setFile(e.target.files[0]));
-  ['dragenter','dragover'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.remove('drag'); }));
-  dropZone.addEventListener('drop', e => setFile(e.dataTransfer.files[0]));
-
-  function buildVariants(oldRaw, matchNoCountry) {
-    const digits = normalizeDigits(oldRaw);
-    if (digits.length < 7 || digits.length > 15) throw new Error('Enter a valid old phone number with 7–15 digits.');
-    const variants = new Set([digits]);
-    // For +1 / 1-prefixed NANP numbers, optionally allow the 10-digit local form.
-    if (matchNoCountry && digits.length === 11 && digits.startsWith('1')) variants.add(digits.slice(1));
-    // Use digit-run matching while tolerating separators and common HTML entity text.
-    // This is for discovery, not a guarantee that all encoded forms are editable.
-    return [...variants].sort((a,b)=>b.length-a.length);
-  }
-  function makeDigitPattern(digits) {
-    const sep = String.raw`(?:[\s\u00a0\u2007\u202f().\[\]{}*\\/_\-–—.:;]|&#(?:x0*20|0*32);?|&nbsp;|&period;|&ast;)*`;
-    return digits.split('').map(ch => ch).join(sep);
-  }
-  function findMatches(text, variants) {
-    const out = [];
-    for (const digits of variants) {
-      const re = new RegExp(`(?<!\\d)${makeDigitPattern(digits)}(?!\\d)`, 'g');
-      let m;
-      while ((m = re.exec(text)) !== null) out.push({index:m.index, length:m[0].length, matched:m[0], digits});
+    function showStatus(message, type = "info") {
+      statusBox.textContent = message;
+      statusBox.className = "status " + type;
     }
-    out.sort((a,b)=>a.index-b.index || b.length-a.length);
-    const filtered = [];
-    let end = -1;
-    for (const m of out) {
-      if (m.index >= end) { filtered.push(m); end = m.index + m.length; }
+
+    function setBusy(value) {
+      busy = value;
+      analyzeBtn.disabled = value;
+      replaceBtn.disabled = value || !extracted;
+      restoreBtn.disabled = value || !extracted;
+      selectAllBtn.disabled = value || !extracted;
+      downloadBtn.disabled = value || !extracted;
     }
-    return filtered;
-  }
-  async function scanPdf(bytes, variants) {
-    if (!window.pdfjsLib) throw new Error('PDF.js did not load. Refresh the page and check your internet connection.');
-    const doc = await pdfjsLib.getDocument({data: bytes.slice()}).promise;
-    const matches = []; let pages = 0;
-    for (let p=1; p<=doc.numPages; p++) {
-      const page = await doc.getPage(p);
-      const content = await page.getTextContent();
-      const text = content.items.map(i => i.str || '').join(' ');
-      const found = findMatches(text, variants);
-      found.forEach(m => matches.push({page:p, ...m, context:text.slice(Math.max(0,m.index-42), Math.min(text.length,m.index+m.length+42))}));
-      pages++;
+
+    function splitParagraphs(text) {
+      return text
+        .replace(/\r/g, "")
+        .split(/\n\s*\n+/)
+        .map(p => p.trim())
+        .filter(Boolean);
     }
-    return {doc, matches, pages};
-  }
-  function showReport(matches) {
-    const body = $('reportBody'); body.replaceChildren();
-    if (!matches.length) {
-      const tr=document.createElement('tr'), td=document.createElement('td');
-      td.colSpan=3; td.textContent='No matching number found in extracted selectable text.'; tr.appendChild(td); body.appendChild(tr);
-    } else {
-      matches.slice(0,250).forEach(m => {
-        const tr=document.createElement('tr');
-        [m.page, m.context, 'Detected — verify replacement'].forEach((v,i)=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});
-        body.appendChild(tr);
+
+    function updateStats() {
+      const text = editor.value;
+      const paragraphs = splitParagraphs(text);
+
+      document.getElementById("paragraphCount").textContent =
+        paragraphs.length;
+
+      let count = 0;
+      for (const paragraph of paragraphs) {
+        count += findPhoneCandidates(paragraph).length;
+      }
+
+      document.getElementById("detectedCount").textContent = count;
+    }
+
+    /*
+      Candidate detection:
+      - Finds phone-like digit strings with optional +, spaces,
+        parentheses, dots and hyphens.
+      - Excludes common date-shaped patterns.
+      - Requires 7 to 15 digits.
+      Detection is heuristic, not a guaranteed phone-number validator.
+    */
+    function findPhoneCandidates(text) {
+      const pattern =
+        /(^|[^\w])(\+?\d(?:[\d().\s-]*\d)?)(?!\w)/g;
+
+      const candidates = [];
+      let match;
+
+      while ((match = pattern.exec(text)) !== null) {
+        const raw = match[2];
+        const start = match.index + match[1].length;
+        const end = start + raw.length;
+        const digits = raw.replace(/\D/g, "");
+
+        if (digits.length < 7 || digits.length > 15) {
+          continue;
+        }
+
+        const trimmed = raw.trim();
+
+        // Avoid common date formats such as 2026-10-29 or 10/29/2026.
+        const looksLikeDate =
+          /^\d{1,4}[./-]\d{1,2}[./-]\d{1,4}$/.test(trimmed);
+
+        if (looksLikeDate) continue;
+
+        // Skip plain short numeric identifiers; accept 10+ digit numbers.
+        const hasPhoneFormatting = /[+().\s-]/.test(trimmed);
+
+        if (digits.length < 10 && !hasPhoneFormatting) {
+          continue;
+        }
+
+        candidates.push({
+          start,
+          end,
+          text: raw
+        });
+      }
+
+      // Prevent overlapping candidates if a PDF has unusual text spacing.
+      const filtered = [];
+      let lastEnd = -1;
+
+      for (const candidate of candidates) {
+        if (candidate.start >= lastEnd) {
+          filtered.push(candidate);
+          lastEnd = candidate.end;
+        }
+      }
+
+      return filtered;
+    }
+
+    /*
+      For every paragraph:
+      - Replace the first detected candidate with the new number.
+      - Remove subsequent detected candidates in that paragraph.
+      Other paragraph text is retained.
+    */
+    function replaceInParagraph(paragraph, replacement) {
+      const candidates = findPhoneCandidates(paragraph);
+
+      if (!candidates.length) {
+        return {
+          text: paragraph,
+          detected: 0,
+          replacements: 0
+        };
+      }
+
+      let output = "";
+      let cursor = 0;
+
+      candidates.forEach((candidate, index) => {
+        output += paragraph.slice(cursor, candidate.start);
+
+        if (index === 0) {
+          output += replacement;
+        }
+
+        cursor = candidate.end;
       });
-      if(matches.length>250){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent=`Showing first 250 of ${matches.length} matches.`;tr.appendChild(td);body.appendChild(tr);}
+
+      output += paragraph.slice(cursor);
+
+      return {
+        text: output,
+        detected: candidates.length,
+        replacements: 1
+      };
     }
-    $('reportWrap').classList.remove('hidden');
-  }
 
-  $('runBtn').addEventListener('click', async () => {
-    try {
-      if (!selectedFile) throw new Error('Choose a PDF first.');
-      const oldRaw = $('oldNumber').value.trim(), newRaw = $('newNumber').value.trim();
-      if (!oldRaw || !newRaw) throw new Error('Enter both the old TFN and the new TFN.');
-      const oldDigits=normalizeDigits(oldRaw), newDigits=normalizeDigits(newRaw);
-      if (newDigits.length < 7 || newDigits.length > 15) throw new Error('The new TFN must contain 7–15 digits.');
-      if (oldDigits === newDigits) throw new Error('The old and new numbers contain the same digits.');
-      if (!window.PDFLib) throw new Error('pdf-lib did not load. Refresh the page and check your internet connection.');
-      $('runBtn').disabled=true; $('stats').classList.add('hidden'); $('reportWrap').classList.add('hidden');
-      setStatus('Reading PDF and scanning selectable text…');
-      const bytes = new Uint8Array(await selectedFile.arrayBuffer());
-      const variants=buildVariants(oldRaw,$('matchNoCountry').checked);
-      const scan=await scanPdf(bytes,variants);
-      $('foundCount').textContent=scan.matches.length;
-      $('pageCount').textContent=scan.pages;
-      $('changedCount').textContent='0';
-      $('stats').classList.remove('hidden'); showReport(scan.matches);
-      if (!scan.matches.length) { setStatus('Scan complete: no matching old TFN was found in selectable text. No PDF was created.', 'warn'); return; }
-      if ($('dryRun').checked) { setStatus(`Scan only complete. Found ${scan.matches.length} candidate match(es) across ${scan.pages} page(s). No PDF was changed.`, 'ok'); return; }
+    async function extractPDFText(file) {
+      const buffer = await file.arrayBuffer();
 
-      // Safe by default: pdf-lib does not provide a high-level API to replace arbitrary
-      // existing text while preserving its original font/layout. Do not create a fake
-      // "edited" file based only on extracted text matches.
-      setStatus(
-        `Found ${scan.matches.length} candidate match(es) across ${scan.pages} page(s), but automatic replacement was not applied.\n\n`+
-        `Reason: PDF.js can extract the visible text, but reliably changing existing PDF text in-place requires mapping each text fragment to its font encoding and drawing coordinates. A blind stream replacement can corrupt the PDF or alter unrelated content.\n\n`+
-        `This version deliberately stops rather than give you a file that appears successful but still contains old numbers. The scan report is ready above. For dependable editing, use a server/desktop PDF text-editing engine or a tailored parser for your PDF sample.`,
-        'warn'
+      const pdf = await pdfjsLib.getDocument({
+        data: new Uint8Array(buffer)
+      }).promise;
+
+      const pages = [];
+
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        showStatus(
+          `Extracting text from page ${pageNumber} of ${pdf.numPages}...`,
+          "info"
+        );
+
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+
+        const items = content.items
+          .filter(item => item.str && item.str.trim())
+          .map(item => {
+            const transform = item.transform || [0, 0, 0, 0, 0, 0];
+
+            return {
+              text: item.str,
+              x: transform[4] || 0,
+              y: transform[5] || 0,
+              height: Math.abs(transform[3]) || item.height || 10,
+              width: item.width || 0
+            };
+          });
+
+        // Reading order: top-to-bottom, then left-to-right.
+        items.sort((a, b) => {
+          if (Math.abs(a.y - b.y) > 3) {
+            return b.y - a.y;
+          }
+          return a.x - b.x;
+        });
+
+        const lines = [];
+
+        for (const item of items) {
+          let line = lines.find(
+            existing => Math.abs(existing.y - item.y) <= 3
+          );
+
+          if (!line) {
+            line = {
+              y: item.y,
+              height: item.height,
+              items: []
+            };
+            lines.push(line);
+          }
+
+          line.items.push(item);
+          line.height = Math.max(line.height, item.height);
+        }
+
+        lines.sort((a, b) => b.y - a.y);
+
+        const pageLines = lines.map(line => {
+          line.items.sort((a, b) => a.x - b.x);
+
+          let text = "";
+          let previous = null;
+
+          for (const item of line.items) {
+            if (previous) {
+              const gap = item.x - (previous.x + previous.width);
+
+              // Approximate spaces between separate PDF text fragments.
+              if (gap > 2) {
+                text += " ";
+              }
+            }
+
+            text += item.text;
+            previous = item;
+          }
+
+          return {
+            text: text.trim(),
+            y: line.y,
+            height: line.height
+          };
+        }).filter(line => line.text);
+
+        // Use larger vertical gaps as approximate paragraph breaks.
+        const gaps = [];
+
+        for (let i = 1; i < pageLines.length; i++) {
+          gaps.push(Math.max(0, pageLines[i - 1].y - pageLines[i].y));
+        }
+
+        const normalGaps = gaps.filter(gap => gap > 0 && gap < 30);
+        normalGaps.sort((a, b) => a - b);
+
+        const typicalGap = normalGaps.length
+          ? normalGaps[Math.floor(normalGaps.length / 2)]
+          : 12;
+
+        const paragraphGap = Math.max(typicalGap * 1.65, 10);
+
+        let pageText = "";
+        let previousLine = null;
+
+        for (const line of pageLines) {
+          if (previousLine) {
+            const verticalGap = previousLine.y - line.y;
+
+            if (verticalGap > paragraphGap) {
+              pageText += "\n\n";
+            } else {
+              pageText += "\n";
+            }
+          }
+
+          pageText += line.text;
+          previousLine = line;
+        }
+
+        if (pageText.trim()) {
+          pages.push(pageText.trim());
+        }
+      }
+
+      return pages.join("\n\n");
+    }
+
+    analyzeBtn.addEventListener("click", async () => {
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showStatus("Please select a PDF file first.", "error");
+        return;
+      }
+
+      if (!file.name.toLowerCase().endsWith(".pdf") &&
+          file.type !== "application/pdf") {
+        showStatus("Please select a valid PDF file.", "error");
+        return;
+      }
+
+      setBusy(true);
+
+      try {
+        const text = await extractPDFText(file);
+
+        if (!text.trim()) {
+          originalText = "";
+          extracted = false;
+          editor.value = "";
+          updateStats();
+          setBusy(false);
+
+          showStatus(
+            "No selectable text was found. This may be a scanned PDF " +
+            "that requires OCR. Try a text-based PDF.",
+            "error"
+          );
+          return;
+        }
+
+        originalText = text;
+        editor.value = text;
+        extracted = true;
+
+        updateStats();
+        setBusy(false);
+
+        showStatus(
+          "PDF text extracted successfully. Review it, then run " +
+          "Detect and Replace TFNs.",
+          "ok"
+        );
+      } catch (error) {
+        console.error(error);
+        extracted = false;
+        setBusy(false);
+
+        showStatus(
+          "Could not read this PDF. It may be damaged, password-protected " +
+          "or unsupported. Try another PDF.",
+          "error"
+        );
+      }
+    });
+
+    replaceBtn.addEventListener("click", () => {
+      if (!extracted) return;
+
+      const replacement = newTFNInput.value.trim();
+
+      if (!replacement) {
+        showStatus("Please enter the new TFN / phone number.", "error");
+        newTFNInput.focus();
+        return;
+      }
+
+      const paragraphs = splitParagraphs(editor.value);
+      let totalDetected = 0;
+      let totalReplaced = 0;
+
+      const processed = paragraphs.map(paragraph => {
+        const result = replaceInParagraph(paragraph, replacement);
+
+        totalDetected += result.detected;
+        totalReplaced += result.replacements;
+
+        return result.text;
+      });
+
+      editor.value = processed.join("\n\n");
+      updateStats();
+
+      document.getElementById("replacementCount").textContent =
+        totalReplaced;
+
+      showStatus(
+        `Finished. Found ${totalDetected} phone-like candidate(s) and ` +
+        `replaced ${totalReplaced} candidate(s). Extra candidates in each ` +
+        `paragraph were removed. Please review the edited text.`,
+        "ok"
       );
-    } catch (e) {
-      setStatus(e && e.message ? e.message : String(e), 'bad');
-    } finally { $('runBtn').disabled=false; }
-  });
-  $('resetBtn').addEventListener('click', () => {
-    selectedFile=null; fileInput.value=''; $('oldNumber').value=''; $('newNumber').value='';
-    $('matchNoCountry').checked=true; $('dryRun').checked=false; prettyName(null);
-    $('stats').classList.add('hidden'); $('reportWrap').classList.add('hidden');
-    setStatus('Ready. Select a PDF and enter both numbers.');
-  });
-})();
-</script>
+    });
+
+    restoreBtn.addEventListener("click", () => {
+      if (!extracted) return;
+
+      editor.value = originalText;
+      document.getElementById("replacementCount").textContent = "0";
+      updateStats();
+
+      showStatus(
+        "Restored the original extracted text. Previous edits were undone.",
+        "info"
+      );
+    });
+
+    selectAllBtn.addEventListener("click", () => {
+      editor.focus();
+      editor.select();
+    });
+
+    editor.addEventListener("input", updateStats);
+
+    downloadBtn.addEventListener("click", async () => {
+      if (!extracted || !editor.value.trim()) {
+        showStatus("There is no text available to export.", "error");
+        return;
+      }
+
+      setBusy(true);
+
+      try {
+        const { PDFDocument, StandardFonts, rgb } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+        const pageWidth = 595.28;
+        const pageHeight = 841.89;
+        const margin = 48;
+        const fontSize = 10;
+        const lineHeight = 14;
+        const maxWidth = pageWidth - margin * 2;
+
+        let page;
+        let y;
+
+        function newPage() {
+          page = pdfDoc.addPage([pageWidth, pageHeight]);
+          y = pageHeight - margin;
+        }
+
+        function ensureSpace(height = lineHeight) {
+          if (!page || y - height < margin) {
+            newPage();
+          }
+        }
+
+        function wrapLine(text, activeFont, size, width) {
+          if (!text) return [""];
+
+          const words = text.split(/\s+/);
+          const lines = [];
+          let current = "";
+
+          for (const word of words) {
+            const test = current ? current + " " + word : word;
+            const measured = activeFont.widthOfTextAtSize(test, size);
+
+            if (measured <= width || !current) {
+              current = test;
+            } else {
+              lines.push(current);
+              current = word;
+
+              // Split an extremely long word to avoid clipping.
+              if (activeFont.widthOfTextAtSize(current, size) > width) {
+                let chunk = "";
+
+                for (const character of current) {
+                  const next = chunk + character;
+
+                  if (
+                    activeFont.widthOfTextAtSize(next, size) > width &&
+                    chunk
+                  ) {
+                    lines.push(chunk);
+                    chunk = character;
+                  } else {
+                    chunk = next;
+                  }
+                }
+
+                current = chunk;
+              }
+            }
+          }
+
+          if (current) lines.push(current);
+          return lines;
+        }
+
+        function drawTextLine(text, activeFont = font, size = fontSize) {
+          ensureSpace(lineHeight);
+
+          page.drawText(text, {
+            x: margin,
+            y,
+            size,
+            font: activeFont,
+            color: rgb(0.12, 0.15, 0.21),
+            maxWidth
+          });
+
+          y -= lineHeight;
+        }
+
+        newPage();
+
+        const rawLines = editor.value.replace(/\r/g, "").split("\n");
+
+        for (const rawLine of rawLines) {
+          const trimmed = rawLine.trim();
+
+          if (!trimmed) {
+            y -= lineHeight * 0.6;
+
+            if (y < margin) {
+              newPage();
+            }
+
+            continue;
+          }
+
+          const isHeading =
+            trimmed.length < 90 &&
+            (/^[A-Z0-9\s:—-]+$/.test(trimmed) ||
+             /^#{1,3}\s/.test(trimmed));
+
+          const cleaned = trimmed.replace(/^#{1,3}\s*/, "");
+          const activeFont = isHeading ? boldFont : font;
+          const activeSize = isHeading ? 11 : fontSize;
+          const wrapped = wrapLine(
+            cleaned,
+            activeFont,
+            activeSize,
+            maxWidth
+          );
+
+          for (const line of wrapped) {
+            drawTextLine(line, activeFont, activeSize);
+          }
+        }
+
+        const bytes = await pdfDoc.save();
+        const blob = new Blob([bytes], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+
+        const sourceName = fileInput.files[0]?.name || "document.pdf";
+        const baseName = sourceName.replace(/\.pdf$/i, "");
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = baseName + "-edited.pdf";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+        setBusy(false);
+
+        showStatus(
+          "Your new PDF has been generated. Check the downloaded file.",
+          "ok"
+        );
+      } catch (error) {
+        console.error(error);
+        setBusy(false);
+
+        showStatus(
+          "PDF generation failed. Try reducing unusual symbols in the text " +
+          "or uploading the PDF again.",
+          "error"
+        );
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      fileInput.value = "";
+      editor.value = "";
+      originalText = "";
+      extracted = false;
+
+      document.getElementById("paragraphCount").textContent = "0";
+      document.getElementById("detectedCount").textContent = "0";
+      document.getElementById("replacementCount").textContent = "0";
+
+      setBusy(false);
+
+      showStatus("Reset complete. Select a new PDF to begin.", "info");
+    });
+
+    setBusy(false);
+    updateStats();
+  </script>
 </body>
 </html>
